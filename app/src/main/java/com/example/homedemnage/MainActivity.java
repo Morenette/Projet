@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import retrofit2.Call;
@@ -43,7 +43,23 @@ public class MainActivity extends AppCompatActivity {
                 .setLenient()
                 .create();
 
-        makeApiCall();
+        List<Category> categoryList = getDataFromCache();
+        if (categoryList != null){
+            showList(categoryList);
+        }else{
+            makeApiCall();
+        }
+    }
+
+    private List<Category> getDataFromCache() {
+        String jsonCategory =  sharedPreferences.getString(Constants.KEY_CATEGORY_LIST, null);
+
+        if(jsonCategory == null) {
+            return null;
+        } else {
+            Type listType = new TypeToken<List<Category>>(){}.getType();
+            return gson.fromJson(jsonCategory, listType);
+        }
     }
 
     private void showList(List<Category> categoryList){
@@ -93,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferences
                 .edit()
-                .putString("jsonCategoryList", jsonString)
+                .putString("Constants.KEY_CATEGORY_LIST", jsonString)
                 .apply();
 
         Toast.makeText(getApplicationContext(), "List saved", Toast.LENGTH_SHORT).show();
