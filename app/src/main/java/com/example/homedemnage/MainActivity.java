@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private SharedPreferences sharedPreferences;
+    private Gson gson;
 
     static final String BASE_URL = "https://raw.githubusercontent.com/Morenette/Api/master/";
 
@@ -32,6 +36,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPreferences = getSharedPreferences("app_projet", Context.MODE_PRIVATE);
+
+        gson = new GsonBuilder()
+                .setLenient()
+                .create();
 
         makeApiCall();
     }
@@ -50,10 +60,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeApiCall(){
-            Gson gson = new GsonBuilder()
-                    .setLenient()
-                    .create();
-
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
@@ -67,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call<RestCategoryResponse> call, Response<RestCategoryResponse> response) {
                     if (response.isSuccessful() &&  response.body() != null){
                         List<Category> categoryList = response.body().getResults();
+                        saveList(categoryList);
                         showList(categoryList);
                     } else {
                         showError();
@@ -78,6 +85,18 @@ public class MainActivity extends AppCompatActivity {
                     showError();
                 }
             });
+
+    }
+
+    private void saveList(List<Category> categoryList){
+        String jsonString = gson.toJson(categoryList);
+
+        sharedPreferences
+                .edit()
+                .putString("jsonCategoryList", jsonString)
+                .apply();
+
+        Toast.makeText(getApplicationContext(), "List saved", Toast.LENGTH_SHORT).show();
 
     }
 
