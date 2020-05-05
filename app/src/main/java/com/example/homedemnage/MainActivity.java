@@ -3,10 +3,12 @@ package com.example.homedemnage;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -15,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private SharedPreferences sharedPreferences;
     private Gson gson;
+    SwipeRefreshLayout swipeRefreshLayout;
+
 
     static final String BASE_URL = "https://raw.githubusercontent.com/Morenette/Api/master/";
 
@@ -49,6 +54,25 @@ public class MainActivity extends AppCompatActivity {
         }else{
             makeApiCall();
         }
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.swipe_1, R.color.swipe_2, R.color.swipe_3);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
+
     }
 
     private List<Category> getDataFromCache() {
@@ -119,5 +143,6 @@ public class MainActivity extends AppCompatActivity {
     private void showError() {
         Toast.makeText(getApplicationContext(), "API Error", Toast.LENGTH_SHORT).show();
     }
+
 }
 
