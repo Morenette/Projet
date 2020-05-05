@@ -22,15 +22,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
         recyclerView.setHasFixedSize(true);
-        // use a linear layout manager
+
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
         List<String> input = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             input.add("Test" + i);
-        }// define an adapter
+        }
+
         mAdapter = new ListAdapter(input);
         recyclerView.setAdapter(mAdapter);
     }
