@@ -7,9 +7,9 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface Api {
-    @GET("/api/v2/pokemon/")
+    @GET("pokecopy.json")
     Call<RestCategoryResponse> getCategoryResponse();
 
-    @GET("/api/v2/ability")
-    Call<RestCategoryResponse> getDetailResponse();
+   //@GET("/api/v2/ability")
+   //Call<RestCategoryResponse> getDetailResponse();
 }

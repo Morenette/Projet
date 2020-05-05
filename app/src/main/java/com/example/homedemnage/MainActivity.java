@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private ListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    static final String BASE_URL = "https://pokeapi.co/";
+    static final String BASE_URL = "https://raw.githubusercontent.com/Morenette/Api/master/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
